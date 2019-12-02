@@ -1,0 +1,18 @@
+  body{
+    background-color:dimgrey;
+  }
+  .hidden {
+    display: none;
+  }
+  
+  .button {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    background-color: rgb(46, 45, 45);
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: gray;
+  }

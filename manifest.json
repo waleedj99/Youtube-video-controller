@@ -1,0 +1,24 @@
+{
+
+    "manifest_version": 2,
+    "name": "ytm",
+    "version": "1.1",
+  
+    "description": "Adds a video controller to the browser so that youtube videos can be controlled from any tab",
+    "icons": {
+      "48": "icons/music_video-24px.svg"
+    },
+  
+    "permissions": [
+      "activeTab",
+      "<all_urls>",
+      "tabs",
+      "cookies"
+    ],
+  
+    "browser_action": {
+      "default_icon": "icons/headphones.svg",
+      "default_title": "Music Controller",
+      "default_popup": "popup/index.html"
+    }
+  }
