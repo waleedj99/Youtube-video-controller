@@ -81,6 +81,9 @@ function hidePlay(){
                 })
         }
         function playLink(tabs){
+            if(selectedLink.substring(23)==""){
+                alert("Bruh")
+            }
             browser.tabs.executeScript(
                 tabs[0].id,{
                     code:'window.location.href =" '+ selectedLink.substring(23) +'"' 
@@ -123,6 +126,7 @@ function hidePlay(){
     });
     document.addEventListener("mouseover",(e)=>{
         function clearCookie(tabs){
+            selectedLink = ""
             browser.tabs.executeScript(
                 tabs[0].id,{
                     code:`
@@ -172,39 +176,41 @@ function hidePlay(){
               }).then(showRecom)
         }
         function showRecom(cookies){
-        linkArr  = cookies.filter(element => {
-            if(element.name.match(/^link-[\d]+$/)!=null)    
-            {
-                return true
-            }
-        });       
-        titleArr = cookies.filter(element => {
+            linkArr  = cookies.filter(element => {
+                if(element.name.match(/^link-[\d]+$/)!=null)    
+                {
+                    return true
+                }
+            });       
+            titleArr = cookies.filter(element => {
                 if(element.name.match(/^title-[\d]+$/)!=null)    
                 {
                     return true
                 }
             });
             
-        titleArr.sort()
-        linkArr.sort()
-        var recomDiv = document.getElementById("recom")
-        recomDiv.innerHTML = ''
-        for(var i = 0;i<10;i++){
-            recomDiv.innerHTML += '<div style ="display:flex"><div class="recom">'+titleArr[i].value +'</div><div id = "'+ linkArr[i].value+'" class="button play-link"><img class = "play" src="/icons/play.svg" alt="Ply"></div></div>'
-            
+            titleArr.sort()
+            linkArr.sort()
+            var recomDiv = document.getElementById("recom")
+            recomDiv.innerHTML = ''
+            for(var i = 0;i<10;i++){
+                recomDiv.innerHTML +=`<div class="play-link" style ="display:flex">
+                                        <div class="recom">`+titleArr[i].value +`</div>
+                                        <div id = "`+ linkArr[i].value + `" class="button play-link">
+                                            <img id = "`+ linkArr[i].value + `" class = "play-link" src="/icons/play.svg" alt="Ply">
+                                        </div>
+                                    </div>`   
+            }
         }
-        
+
         if(e.target.classList.contains("shuffle")){
+            selectedLink = ""
             document.querySelector("#recom").classList.remove("hidden")
             browser.tabs.query({url:"https://www.youtube.com/*"})
             .then(clearCookie)
             .catch(reportError);
         }
     })
-    document.addEventListener("mouseout",(e)=>{
-        if(e.target.classList.contains("prev")){
-            document.querySelector("#recom").classList.add("hidden")
-        }
-    })
+
 })()
 
