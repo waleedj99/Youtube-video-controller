@@ -15,6 +15,7 @@ function hidePlay(){
     document.querySelector(".pause").classList.remove("hidden");
 }
 (function listenForClicks() {
+    let selectedLink
     browser.tabs.query({url:"https://www.youtube.com/*",audible:false}).then(isTabPlaying)
     document.addEventListener("click", (e) => {
         function pauseMusic(tabs) {
@@ -79,6 +80,15 @@ function hidePlay(){
                     document.getElementsByClassName("ytp-play-button ytp-button")[0].click()`
                 })
         }
+        function playLink(tabs){
+            browser.tabs.executeScript(
+                tabs[0].id,{
+                    code:'window.location.href =" '+ selectedLink.substring(23) +'"' 
+                }
+            )
+            playMusic(tabs)
+              
+        }
         if (e.target.classList.contains("pause")) {
             browser.tabs.query({url:"https://www.youtube.com/*",audible:true})
             .then(pauseMusic)
@@ -104,9 +114,28 @@ function hidePlay(){
             browser.tabs.query({url:"https://www.youtube.com/*"})
             .then(shuffleMusic)
             .catch(reportError);
+        }else if(e.target.classList.contains("play-link")){
+            selectedLink = e.target.id
+            browser.tabs.query({url:"https://www.youtube.com/*"})
+            .then(playLink)
+            .catch(reportError);
         }
     });
     document.addEventListener("mouseover",(e)=>{
+        function clearCookie(tabs){
+            browser.tabs.executeScript(
+                tabs[0].id,{
+                    code:`
+                    ar res = document.cookie;
+            var multiple = res.split(";");
+            for(var i = 0; i < multiple.length; i++) {
+               var key = multiple[i].split("=");
+               document.cookie = key[0]+" =; expires = Thu, 01 Jan 1970 00:00:00 UTC"
+            }    
+                `
+                })
+                addCookie(tabs)
+        }
         function addCookie(tabs){
             browser.tabs.executeScript(
                 tabs[0].id,{
@@ -114,16 +143,27 @@ function hidePlay(){
                     recomLinks = []
                     arrayElements = []
                     arrayTitles=[]
+                    arrayLinks=[]
                     sidebarTitleClass = "#secondary h3 span#video-title.style-scope.ytd-compact-video-renderer"
                     recomTitles = document.querySelectorAll(sidebarTitleClass)
-                Array.from(recomTitles).forEach((child,index) => {
-                    document.cookie = "title-"+index+"="+child.innerHTML.trim()
+                    sidebarClass = "yt-simple-endpoint inline-block style-scope ytd-thumbnail"
+                    recomLinksElements =  document.getElementsByClassName(sidebarClass)
+                    Array.from(recomLinksElements).forEach(child => {
+                        if(!child.href.includes('start_radio=1'))
+                            arrayLinks.push(child)
+                    });
+
+                    Array.from(recomTitles).forEach((child,index) => {
+                        arrayTitles.push(child.innerHTML.trim())
+                    
+                        for(var i = 0;i<10;i++){
+                        document.cookie = "title-"+i+"="+arrayTitles[i]
+                        document.cookie = "link-"+i+"="+arrayLinks[i]
+                    }
                  });    
-                
-                    `
+                `
                 })
                 getCookies(tabs)
-                
         }
         function getCookies(tabs){
             browser.cookies.getAll({
@@ -132,30 +172,41 @@ function hidePlay(){
               }).then(showRecom)
         }
         function showRecom(cookies){
-            
-        newArr = cookies.filter(element => {
+        linkArr  = cookies.filter(element => {
+            if(element.name.match(/^link-[\d]+$/)!=null)    
+            {
+                return true
+            }
+        });       
+        titleArr = cookies.filter(element => {
                 if(element.name.match(/^title-[\d]+$/)!=null)    
                 {
                     return true
                 }
             });
-
+            
+        titleArr.sort()
+        linkArr.sort()
         var recomDiv = document.getElementById("recom")
         recomDiv.innerHTML = ''
-        newArr.forEach(element => {
-            recomDiv.innerHTML += '<h5><b>'+element.value +'</b></h5>'
-        });
+        for(var i = 0;i<10;i++){
+            recomDiv.innerHTML += '<div style ="display:flex"><div class="recom">'+titleArr[i].value +'</div><div id = "'+ linkArr[i].value+'" class="button play-link"><img class = "play" src="/icons/play.svg" alt="Ply"></div></div>'
             
+        }
+        
+        // for(var i = 0;i<10;i++){
+        //     recomDiv.getElementsByTagName("marquee")[i].stop();     
+        // }    
         }
         if(e.target.classList.contains("shuffle")){
             document.querySelector("#recom").classList.remove("hidden")
             browser.tabs.query({url:"https://www.youtube.com/*"})
-            .then(addCookie)
+            .then(clearCookie)
             .catch(reportError);
         }
     })
     document.addEventListener("mouseout",(e)=>{
-        if(e.target.classList.contains("shuffle")){
+        if(e.target.classList.contains("prev")){
             document.querySelector("#recom").classList.add("hidden")
         }
     })
