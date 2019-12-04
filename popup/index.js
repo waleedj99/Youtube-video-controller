@@ -194,10 +194,6 @@ function hidePlay(){
             
         }
         
-        // for(var i = 0;i<10;i++){
-        //     recomDiv.getElementsByTagName("marquee")[i].stop();     
-        // }    
-        }
         if(e.target.classList.contains("shuffle")){
             document.querySelector("#recom").classList.remove("hidden")
             browser.tabs.query({url:"https://www.youtube.com/*"})
