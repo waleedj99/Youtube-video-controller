@@ -188,20 +188,24 @@ function hidePlay(){
                     return true
                 }
             });
-            
             titleArr.sort()
             linkArr.sort()
             var recomDiv = document.getElementById("recom")
             recomDiv.innerHTML = ''
             for(var i = 0;i<10;i++){
-                recomDiv.innerHTML +=`<div class="play-link" style ="display:flex">
-                                        <div class="recom">`+titleArr[i].value +`</div>
-                                        <div id = "`+ linkArr[i].value + `" class="button play-link">
-                                            <img id = "`+ linkArr[i].value + `" class = "play-link" src="/icons/play.svg" alt="Ply">
-                                        </div>
-                                    </div>`   
-            }
+                //alert(titleArr[i].value)
+                //alert(titleArr[i].value === "undefined")
+                if(typeof titleArr[i].value !== "undefined"){
+                    recomDiv.innerHTML +=`<div class="play-link" style ="display:flex">
+                    <div class="recom">`+titleArr[i].value +`</div>
+                    <div id = "`+ linkArr[i].value + `" class="button play-link">
+                        <img id = "`+ linkArr[i].value + `" class = "play-link" src="/icons/play.svg" alt="Ply">
+                    </div>
+                </div>` 
+                }
         }
+        }
+      
 
         if(e.target.classList.contains("shuffle")){
             selectedLink = ""
