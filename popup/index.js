@@ -69,16 +69,16 @@ function hidePlay(){
                 })
         }    
         function prevMusic(tabs){
-            browser.tabs.executeScript(
-                tabs[0].id,{
-                code:`window.history.back();
-                setTimeout(()=>{
-                    window.location.href = window.location.href.substring(0,43) + "&t=0s"
-                },100) 
-                `})
+                browser.tabs.executeScript(
+                    tabs[0].id,{
+                    code:`window.history.back();`
+                }).then(()=>{
+                    browser.tabs.reload(tabs[0].id,{bypassCache: true})
+                })
         }
         
         function replayMusic(tabs){
+            
             browser.tabs.executeScript(
                 tabs[0].id,{
                     code:'window.location.href = window.location.href + "&t=0s"'

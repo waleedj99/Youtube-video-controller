@@ -13,7 +13,8 @@
       "activeTab",
       "<all_urls>",
       "tabs",
-      "cookies"
+      "cookies",
+      "history"
     ],
   
     "browser_action": {
