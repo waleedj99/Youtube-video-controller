@@ -1,11 +1,13 @@
 let selectedTab
+
 function isTabPlaying(tabs){
     if(tabs[0]!=undefined){
         showPlay()
     }else{
         hidePlay()
     }
-} 
+}
+
 function showPlay(){
     document.querySelector(".pause").classList.add("hidden");
     document.querySelector(".play").classList.remove("hidden");
@@ -69,15 +71,17 @@ function hidePlay(){
         function prevMusic(tabs){
             browser.tabs.executeScript(
                 tabs[0].id,{
-                code:'window.history.back();'
-                })
-                
+                code:`window.history.back();
+                setTimeout(()=>{
+                    window.location.href = window.location.href.substring(0,43) + "&t=0s"
+                },100) 
+                `})
         }
+        
         function replayMusic(tabs){
             browser.tabs.executeScript(
                 tabs[0].id,{
-                    code:`document.getElementsByClassName("ytp-left-controls")[0].innerHTML = '<button class="ytp-play-button ytp-button" title="Replay"><svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-259"></use><path class="ytp-svg-fill" d="M 18,11 V 7 l -5,5 5,5 v -4 c 3.3,0 6,2.7 6,6 0,3.3 -2.7,6 -6,6 -3.3,0 -6,-2.7 -6,-6 h -2 c 0,4.4 3.6,8 8,8 4.4,0 8,-3.6 8,-8 0,-4.4 -3.6,-8 -8,-8 z" id="ytp-id-259"></path></svg></button >'
-                    document.getElementsByClassName("ytp-play-button ytp-button")[0].click()`
+                    code:'window.location.href = window.location.href + "&t=0s"'
                 })
         }
         function playLink(tabs){
@@ -93,33 +97,33 @@ function hidePlay(){
               
         }
         if (e.target.classList.contains("pause")) {
-            browser.tabs.query({url:"https://www.youtube.com/*",audible:true})
+            browser.tabs.query({url:"https://www.youtube.com/watch*",audible:true})
             .then(pauseMusic)
             .catch(reportError);
         }else if(e.target.classList.contains("play")){
-            browser.tabs.query({url:"https://www.youtube.com/*",audible:false})
+            browser.tabs.query({url:"https://www.youtube.com/watch*",audible:false})
             .then(playMusic)
             .catch(reportError);
         }
         else if (e.target.classList.contains("next")) {
-        browser.tabs.query({url:"https://www.youtube.com/*",audible:true })
+        browser.tabs.query({url:"https://www.youtube.com/watch*",audible:true })
         .then(nextMusic)
         .catch(reportError);
         }else if(e.target.classList.contains("prev")){
-        browser.tabs.query({url:"https://www.youtube.com/*",audible:true })
+        browser.tabs.query({url:"https://www.youtube.com/watch*",audible:true })
         .then(prevMusic)
         .catch(reportError);
         }else if(e.target.classList.contains("replay")){
-            browser.tabs.query({url:"https://www.youtube.com/*",audible:true })
+            browser.tabs.query({url:"https://www.youtube.com/watch*",audible:true })
         .then(replayMusic)
         .catch(reportError);
         }else if(e.target.classList.contains("shuffle")){
-            browser.tabs.query({url:"https://www.youtube.com/*"})
+            browser.tabs.query({url:"https://www.youtube.com/watch*"})
             .then(shuffleMusic)
             .catch(reportError);
         }else if(e.target.classList.contains("play-link")){
             selectedLink = e.target.id
-            browser.tabs.query({url:"https://www.youtube.com/*"})
+            browser.tabs.query({url:"https://www.youtube.com/watch*"})
             .then(playLink)
             .catch(reportError);
         }
@@ -188,22 +192,19 @@ function hidePlay(){
                     return true
                 }
             });
-            titleArr.sort()
-            linkArr.sort()
+            
             var recomDiv = document.getElementById("recom")
             recomDiv.innerHTML = ''
             for(var i = 0;i<10;i++){
-                //alert(titleArr[i].value)
-                //alert(titleArr[i].value === "undefined")
-                if(typeof titleArr[i].value !== "undefined"){
+                if(titleArr[i].value !== "undefined"){
                     recomDiv.innerHTML +=`<div class="play-link" style ="display:flex">
                     <div class="recom">`+titleArr[i].value +`</div>
                     <div id = "`+ linkArr[i].value + `" class="button play-link">
                         <img id = "`+ linkArr[i].value + `" class = "play-link" src="/icons/play.svg" alt="Ply">
                     </div>
-                </div>` 
+                    </div>` 
                 }
-        }
+            }
         }
       
 
