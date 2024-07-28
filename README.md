@@ -1,5 +1,4 @@
 # Youtube-video-controller
-# ytm - YouTube Video Controller
 
 **"ytm"** is a browser extension that provides an easy-to-use interface for controlling YouTube video playback from any tab. With this extension, you can:
 
